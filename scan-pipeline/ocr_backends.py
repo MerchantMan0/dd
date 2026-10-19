@@ -11,6 +11,15 @@ def get_doctr_model():
         from doctr.models import ocr_predictor
         device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
         doctr_model = ocr_predictor(pretrained=True).to(device)
+        actual = next(doctr_model.parameters()).device
+        print(f"[docTR] model on {actual} (torch {torch.__version__}, built for CUDA {torch.version.cuda})", flush=True)
+        if actual.type == "cpu":
+            print(
+                "[docTR] WARNING: running on CPU. torch.cuda.is_available() is False. "
+                "Check the runtime has a GPU and that torch is a CUDA build "
+                "(torch.version.cuda is None for CPU-only wheels).",
+                flush=True,
+            )
     return doctr_model
 
 def ocr_doctr(image_crop: np.ndarray) -> str:
