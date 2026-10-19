@@ -30,6 +30,11 @@ def get_session():
     if _session is None:
         from rembg import new_session
         _session = new_session(MASK_MODEL)
+        import onnxruntime as ort
+        active = _session.inner_session.get_providers()
+        print(f"[rembg] {MASK_MODEL} providers: {active} (available: {ort.get_available_providers()})", flush=True)
+        if "CUDAExecutionProvider" not in active:
+            print("[rembg] WARNING: card scan is running on CPU.", flush=True)
     return _session
 
 
