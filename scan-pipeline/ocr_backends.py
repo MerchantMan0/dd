@@ -7,8 +7,10 @@ doctr_model = None
 def get_doctr_model():
     global doctr_model
     if doctr_model is None:
+        import torch
         from doctr.models import ocr_predictor
-        doctr_model = ocr_predictor(pretrained=True)
+        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        doctr_model = ocr_predictor(pretrained=True).to(device)
     return doctr_model
 
 def ocr_doctr(image_crop: np.ndarray) -> str:

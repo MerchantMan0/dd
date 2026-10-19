@@ -7,8 +7,8 @@ import cv2
 import numpy as np
 from scan_card import scan
 from doctr.io import DocumentFile
-from doctr.models import ocr_predictor
 
+from ocr_backends import get_doctr_model
 from image_transform import warp_to_source
 from overlay import overlay
 from extract_fields import extract_fields
@@ -18,17 +18,8 @@ from scoring import score_card
 HERE = Path(__file__).parent
 os.environ.setdefault("U2NET_HOME", str(HERE / ".cache" / "u2net"))
 
-model = None
-
-# gets the OCR model
 def get_model():
-    global model
-    if model is None:
-        import torch
-        model = ocr_predictor(pretrained=True)
-        if torch.cuda.is_available():
-            model = model.cuda()
-    return model
+    return get_doctr_model()
 
 # OCRs the page.
 def ocr_page(model, image_bytes: bytes) -> dict:
